@@ -43,9 +43,11 @@ const GameCanvas = () => {
             //     // console.log(currentTrackPoint);
             // }
             context.moveTo(200, ((Math.sin(frame / 100)) * 250) + 500);
-            context.lineTo(600, 1000 - frame);
+            context.lineTo(((Math.sin(frame / 50)) * 250) + 500, 500);
+            context.lineTo(((Math.sin(frame / 30)) * 250) + 800, ((Math.sin(frame / 50)) * 250) + 500);
+            context.lineTo(200, ((Math.sin(frame / 100)) * 250) + 500);
 
-            context.stroke();
+            context.fill();
             console.log("fill");
             requestAnimationFrame(loop);
 
