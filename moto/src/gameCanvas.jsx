@@ -5,7 +5,6 @@ let trackVertices = [];
 const createVertices = () => {
     while (trackVertices.length < 255) {
         trackVertices.push(Math.floor(Math.random() * 255));
-
     }
 }
 
@@ -13,13 +12,14 @@ const createVertices = () => {
 
 //movement of track
 const lerp = (nthTrackVertex, nPlusOnethTrackVertex, t) => {
-    return nthTrackVertex + (nPlusOnethTrackVertex - nthTrackVertex) * t
+    return nthTrackVertex + (nPlusOnethTrackVertex - nthTrackVertex) * (1 - Math.cos(t * Math.PI)) / 2;
 }
 
 const trackPointWithOffSet = x => {
-
-    x = x % 255; //repeating
-    return lerp(trackVertices[Math.floor(x)], trackVertices[Math.ceil(x)], x - Math.floor(x));
+    let horScale = 0.005;
+    let vertScale = 0.5
+    x = x * horScale % 255; //repeating
+    return lerp(trackVertices[Math.floor(x)], trackVertices[Math.ceil(x)], x - Math.floor(x)) * vertScale;
 }
 
 const GameCanvas = () => {
@@ -40,31 +40,29 @@ const GameCanvas = () => {
 
         let frame = 0;
         function loop() {
+            console.log("loop");
+            frame += 1;
+            context.fillStyle = "#0000ff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
 
+            context.fillStyle = "black";
+            let speed = 4;
+            context.beginPath();
+            for (let i = 0; i < context.canvas.width; i++) {
+                let trackPointMovedToBottom = context.canvas.height - 200 - trackPointWithOffSet(speed * frame + i);
+                context.lineTo(i, trackPointMovedToBottom);
+            }
+            context.lineTo(context.canvas.width, context.canvas.height);
+            context.lineTo(0, context.canvas.height);
+            console.log(context.canvas.width, context.canvas.height);
+
+
+            context.fill();
+            requestAnimationFrame(loop);
 
         }
 
-        //loop func
-        console.log("loop");
-        // frame += 1;
-        // context.fillStyle = "#0000ff";
-        // context.fillRect(0, 0, canvas.width, canvas.height);
-
-        context.fillStyle = "black";
-        context.beginPath();
-        for (let i = 0; i < context.canvas.width; i++) {
-            context.lineTo(i, trackPointWithOffSet(i));
-        }
-        context.lineTo(context.canvas.width, context.canvas.height);
-        context.lineTo(0, context.canvas.height);
-        console.log(context.canvas.width, context.canvas.height);
-
-
-        context.fill();
-        // requestAnimationFrame(loop);
-        //endloop
-
-        // loop();
+        loop();
 
 
 
