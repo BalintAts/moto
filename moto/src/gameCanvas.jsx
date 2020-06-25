@@ -1,18 +1,25 @@
 import React, { useRef, useEffect, useState } from 'react';
 
-let trackPoints = [0, 200, 500, 400, 200, 500, 600, 200]
+let trackVertices = [];
 
+const createVertices = () => {
+    while (trackVertices.length < 255) {
+        trackVertices.push(Math.floor(Math.random() * 255));
 
-const testFunc = () => {
-    console.log("testFunc_called");
+    }
 }
 
-const lerp = (a, b, t) => {
-    return a + (b - a) * t
+
+
+//movement of track
+const lerp = (nthTrackVertex, nPlusOnethTrackVertex, t) => {
+    return nthTrackVertex + (nPlusOnethTrackVertex - nthTrackVertex) * t
 }
 
-let noise = x => {
-    return lerp(0, 1000, x);
+const trackPointWithOffSet = x => {
+
+    x = x % 255; //repeating
+    return lerp(trackVertices[Math.floor(x)], trackVertices[Math.ceil(x)], x - Math.floor(x));
 }
 
 const GameCanvas = () => {
@@ -27,35 +34,37 @@ const GameCanvas = () => {
         canvas.style.height = `${window.innerHeight}px`;
         const context = canvas.getContext("2d");
         contextRef.current = context;
+        createVertices();
 
 
 
         let frame = 0;
         function loop() {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            frame += 1;
-            context.fillStyle = "#0000ff";
 
-            context.fillStyle = "black";
-            context.beginPath();
-            // for (let i = 0; i < canvas.width; i++) {
-            //     // let currentTrackPoint = context.lineTo(i, lerp(trackPoints[0], trackPoints[1], i));
-            //     // console.log(currentTrackPoint);
-            // }
-            context.moveTo(200, ((Math.sin(frame / 100)) * 250) + 500);
-            context.lineTo(((Math.sin(frame / 50)) * 250) + 500, 500);
-            context.lineTo(((Math.sin(frame / 30)) * 250) + 800, ((Math.sin(frame / 50)) * 250) + 500);
-            context.lineTo(200, ((Math.sin(frame / 100)) * 250) + 500);
-
-            context.fill();
-            console.log("fill");
-            requestAnimationFrame(loop);
 
         }
 
+        //loop func
+        console.log("loop");
+        // frame += 1;
+        // context.fillStyle = "#0000ff";
+        // context.fillRect(0, 0, canvas.width, canvas.height);
+
+        context.fillStyle = "black";
+        context.beginPath();
+        for (let i = 0; i < context.canvas.width; i++) {
+            context.lineTo(i, trackPointWithOffSet(i));
+        }
+        context.lineTo(context.canvas.width, context.canvas.height);
+        context.lineTo(0, context.canvas.height);
+        console.log(context.canvas.width, context.canvas.height);
 
 
-        loop();
+        context.fill();
+        // requestAnimationFrame(loop);
+        //endloop
+
+        // loop();
 
 
 
@@ -70,3 +79,18 @@ const GameCanvas = () => {
 }
 
 export default GameCanvas;
+
+
+
+
+            // for (let i = 0; i < canvas.width; i++) {
+            //     // let currentTrackPoint = context.lineTo(i, lerp(trackPoints[0], trackPoints[1], i));
+            //     // console.log(currentTrackPoint);
+            // }
+            // context.moveTo(200, ((Math.sin(frame / 100)) * 250) + 500);
+            // context.lineTo(((Math.sin(frame / 50)) * 250) + 500, 500);
+            // context.lineTo(((Math.sin(frame / 30)) * 250) + 800, ((Math.sin(frame / 50)) * 250) + 500);
+            // context.lineTo(200, ((Math.sin(frame / 100)) * 250) + 500);
+
+            // context.fill();
+            // console.log("fill");
